@@ -1,79 +1,169 @@
-import Surface                      from 'famous/core/Surface.js'
-import { View }                     from 'arva-js/core/View.js'
-import { layout, event, options }   from 'arva-js/layout/Decorators.js'
-import { Model }                    from 'arva-js/core/Model.js'
+import {View}                           from 'arva-js/core/View.js'
+import {layout, dynamic, bindings, flow}from 'arva-js/layout/Decorators.js'
+import {Model}                          from 'arva-js/core/Model.js'
+import {Surface}                        from 'arva-js/surfaces/Surface.js';
 
-class Cow {
+import {NiceText}                       from './NiceText';
+import {LabeledText}                    from './LabeledText';
 
+
+let roundToTwoDecimals = (value) => Math.round(value * 100) / 100;
+let getMilageConstant = (mileage) => {
+    if (mileage < 20000) {
+        return 1;
+    }
+    if (mileage < 40000) {
+        return 0.8;
+    }
+    if (mileage < 60000) {
+        return 0.6;
+    }
+    if (mileage < 80000) {
+        return 0.4;
+    }
+    if (mileage < 100000) {
+        return 0.2;
+    }
+    return 0;
 }
 
-@options.setup({
-  body: Model,
-  nested: {welcomeMessage: 'Hey dude!'},
-  swap: false,
-  compoundOptions1: {height: 'opt1height', weight: 'op1weight'},
-  compoundOptions2: {height: 'opt2height', weight: 'op2weight'},
-  compoundOptions3: {}
+
+@layout.nativeScrollable()
+@bindings.setup({
+    initialPrice: 32000,
+    damageSeverity: 0,
+    mileage: 30000,
+    valueBeforeAccident: 28000,
+    valueAfterAccident: undefined
 })
-@layout.dockPadding(10)
-.dockSpace(30)
+@bindings.preprocess((options, defaultOptions) => {
+    let {
+        initialPrice = defaultOptions.initialPrice,
+        damageSeverity = defaultOptions.damageSeverity,
+        mileage = defaultOptions.mileage
+    } = options;
+    options.valueAfterAccident =
+        initialPrice * 0.9 *
+        (1 - damageSeverity) *
+        getMilageConstant(mileage)
+})
+@layout.columnDockPadding(500, [50])
+    .dockSpace(30)
 export class HomeView extends View {
 
-  @layout
-    .dock.top(true)
-  heightWeightName = () => {
-    return AnotherView.with({
-      height: this.options.body.height + 3,
-      weight: this.options.body.weight,
+    @layout.fullSize()
+    background = Surface.with({ properties: { backgroundColor: 'white' } });
+
+    @layout.dock.top()
+        .size(undefined, true)
+    welcomeText = NiceText.with({
+        content: `Welcome`,
+        properties: {
+            fontSize: '32px'
+        }
+    });
+
+    @layout.dock.top()
+        .size(350, true)
+    description = NiceText.with({
+        content: `This is a guide to help you determine the diminished value of your car.`,
+        properties: {
+            fontSize: '18px'
+        }
+    });
+    @layout.dock.top()
+        .size(350, true)
+    detailedDescription = NiceText.with({
+        content: `The formula is used by insurance companies to asses how much money your car was worth after a crash.`,
+        properties: {
+            fontSize: '12px'
+        }
+    });
+
+    @layout.dock.top()
+        .size(undefined, true)
+    initialMarketPrice = LabeledText.with({
+        label: 'The sales value of your car (€)',
+        @bindings.onChange((value) => {
+            this.options.initialPrice = value;
+        })
+        value: this.options.initialPrice
     })
-  }
-  @layout
-    .dock.top(true)
-    .dockSpace(100)
-  welcomeMessage = Surface.with({content: this.options.nested.welcomeMessage})
 
 
-  @layout
-    .dock.top(true)
-  heightWeightName2 = () => {
-    window.options = this.options
-    return AnotherView.with(this.options.swap ? this.options.compoundOptions2 : this.options.compoundOptions1)
-  }
 
-  @layout
-    .dock.top(true)
-  heightWeightName3 = () => {
-    return AnotherView.with(this.options.swap ? this.options.compoundOptions1 : this.options.compoundOptions2)
-  }
+    @layout.dock.top()
+        .size(undefined, true)
+    mileage = LabeledText.with({
+        label: 'The mileage of your car',
+        @bindings.onChange((value) => {
+            this.options.mileage = value;
+        })
+        value: this.options.mileage
+    });
+
+    @layout.dock.top()
+        .size(undefined, true)
+    damageSeverity = LabeledText.with({
+        label: 'Damage severity',
+        dropdown: {
+            items: [
+                {
+                    text: 'No structural damage or replaced',
+                    value: 0
+                }, {
+                    text: 'Minor damage to structure and panels',
+                    value: 0.25
+                }, {
+                    text: 'Moderate damage to structure and panels',
+                    value: 0.5
+                },
+                {
+                    text: 'Major damage to structure and panels',
+                    value: 0.75
+                }, {
+                    text: 'Severe structural damage',
+                    value: 1
+                }
+            ],
+            @bindings.onChange((newSelectedItem) => {
+                    if (newSelectedItem) {
+                        this.options.damageSeverity = newSelectedItem.value
+                    }
+                }
+            )
+            selectedItem: undefined
+        }
+    })
 
 
-  //TODO This doesn't work yet
-  @layout
-    .dock.top(true)
-  heightWeightName4 = () => {
-    return AnotherView.with(this.options.compoundOptions3)
-  }
+
+    @flow.stateStep('increase', { transition: { duration: 100 } }, layout.rotateFrom(0, 0, 0.1))
+    @flow.stateStep('increase', { transition: { duration: 100 } }, layout.rotate(0, 0, 0))
+    @flow.stateStep('decrease', { transition: { duration: 100 } }, layout.rotateFrom(0, 0, 0.1))
+    @dynamic(({ valueAfterAccident }) => {
+            let scalingFactor = Math.min(Math.max((valueAfterAccident / 28000), 0.2), 1.7)
+            return layout.scale(scalingFactor, scalingFactor, 1)
+        }
+    )
+    @layout.dock.top()
+        .size(undefined, true)
+    valueAdjustedForMileage = (options) => {
+        let currentValue = options.valueAfterAccident;
+        if (this._lastValue !== undefined) {
+            this.setRenderableFlowState(this.valueAdjustedForMileage,
+                this._lastValue > currentValue ? 'decrease' : 'increase');
+        }
+        this._lastValue = currentValue;
+        return NiceText.with({
+            content: `The worth of your car after the accident: 
+        <span style="color: rgba(156, 39, 176, 0.95); font-size: 30px;" >
+        €${roundToTwoDecimals(
+                currentValue
+            )}</span>`
+        });
+    }
 
 }
 
-@options.setup({
-  height: 100,
-  weight: 100,
-  name: 'Karl'
-})
-class AnotherView extends View {
-
-  @layout.size(~100, ~25)
-  @layout.dock.top()
-  heightInfo = Surface.with({content: `You are ${this.options.height} cm tall!`})
-
-  @layout.size(~100, ~25)
-  @layout.dock.top()
-  weightInfo = Surface.with({content: `You are ${this.options.weight} kgs heavy.`})
-
-  @layout.size(~100, ~25)
-  @layout.dock.top()
-  nameInfo = Surface.with({content: `You are called ${this.options.name}.`})
-
-}
 
