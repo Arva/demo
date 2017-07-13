@@ -15,7 +15,6 @@ import {NiceDropdown}           from './NiceDropdown.js';
     value: '',
     dropdown: { selectedItem: {} }
 })
-
 @layout.dockSpace(10)
 export class LabeledInput extends View {
 
