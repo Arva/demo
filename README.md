@@ -1,5 +1,10 @@
-# Arva Seed
-Seed project for cross platform apps based on Arva
+# Demo projects
 
-## Installation
-Instructions can be found <a href="http://arva.readme.io/docs/installation">here</a>.
+To get started, navigate to one of the demo projects, then hit
+
+
+```
+npm i && jspm i
+```
+
+After installing you can build with `npm run build` or watch with `npm run watch`. Have fun!

@@ -2,10 +2,10 @@
  * Created by lundfall on 12/07/2017.
  */
 
-import {Dropdown}               from 'arva-js/surfaces/Dropdown.js';
+import {Dropdown as RawDropdown}               from 'arva-js/surfaces/Dropdown.js';
 
 
-export class NiceDropdown extends Dropdown {
+export class Dropdown extends RawDropdown {
     static with(options) {
         return super.with({
             ...options, properties: {

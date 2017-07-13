@@ -2,13 +2,11 @@
  * Created by lundfall on 12/07/2017.
  */
 
-import {InputSurface}           from 'arva-js/surfaces/InputSurface.js';
-
 import {View}                   from 'arva-js/core/View.js';
 import {layout, bindings, event}from 'arva-js/layout/Decorators.js';
 import {Text}                   from './Text.js';
-import {NiceInputSurface}       from './NiceInputSurface.js';
-import {NiceDropdown}           from './NiceDropdown.js';
+import {InputSurface}           from './InputSurface.js';
+import {Dropdown}               from './Dropdown.js';
 
 @bindings.setup({
     content: 'Hello world',
@@ -23,14 +21,14 @@ export class LabeledInput extends View {
 
     @layout.dock.top(32)
     inputSurface = this.options.dropdown.items ?
-        NiceDropdown.with({
+        Dropdown.with({
             items: this.options.dropdown.items,
             @bindings.onChange((selectedItem) =>
                 this.options.dropdown.selectedItem = selectedItem
             )
             selectedItem: undefined
         }) :
-        NiceInputSurface.with({
+        InputSurface.with({
             @bindings.onChange((value) => {
                 this.options.value = value;
             })

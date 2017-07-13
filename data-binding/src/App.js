@@ -15,8 +15,6 @@ import './fonts.css';
 /* Here we import all controllers we want to use in the app */
 import {HomeController}             from './controllers/HomeController.js';
 
-import './utils/debugging.js';
-
 export class App extends ArvaApp {
 
     /* References to Dependency Injection created App and Controller instances, so they are not garbage collected. */

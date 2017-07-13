@@ -5,8 +5,8 @@
 
 let path = require('path');
 let packageOptions = require('../../package.json');
-let {arva: {links}} = packageOptions;
-let {jspm: {dependencies: jspmDependencies}} = packageOptions;
+let {arva: {links = {}} = {}} = packageOptions;
+let {jspm: {dependencies: jspmDependencies }} = packageOptions;
 
 module.exports = Object.keys(links).reduce((accumulator, dependencyName) => {
     let jspmDependencyName = jspmDependencies[dependencyName];

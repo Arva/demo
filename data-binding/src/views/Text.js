@@ -15,5 +15,4 @@ export class Text extends Surface {
             }
         })
     }
-
 }

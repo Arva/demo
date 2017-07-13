@@ -2,32 +2,14 @@ import {View}                           from 'arva-js/core/View.js'
 import {layout, dynamic, bindings, flow}from 'arva-js/layout/Decorators.js'
 import {Model}                          from 'arva-js/core/Model.js'
 import {Surface}                        from 'arva-js/surfaces/Surface.js';
-
-import {Text}                           from './Text.js';
-import {LabeledInput}                   from './LabeledInput.js';
 import {InputSurface}                   from 'arva-js/surfaces/InputSurface.js';
 
+import {getMileageConstant,
+    roundToTwoDecimals}                 from '../utils/Calculations.js';
+import {Text}                           from './Text.js';
+import {LabeledInput}                   from './LabeledInput.js';
 
-let roundToTwoDecimals = (value) => Math.round(value * 100) / 100;
-let getMilageConstant = (mileage) => {
-    if (mileage < 20000) {
-        return 1;
-    }
-    if (mileage < 40000) {
-        return 0.8;
-    }
-    if (mileage < 60000) {
-        return 0.6;
-    }
-    if (mileage < 80000) {
-        return 0.4;
-    }
-    if (mileage < 100000) {
-        return 0.2;
-    }
-    return 0;
-}
-
+let shortTransition = { transition: { duration: 100 } };
 
 @layout.nativeScrollable()
 @bindings.setup({
@@ -35,8 +17,7 @@ let getMilageConstant = (mileage) => {
     damageSeverity: 0,
     mileage: 30000,
     valueBeforeAccident: 28000,
-    valueAfterAccident: undefined,
-    myName: ''
+    valueAfterAccident: undefined
 })
 @bindings.preprocess((options, defaultOptions) => {
     let {
@@ -47,7 +28,7 @@ let getMilageConstant = (mileage) => {
     options.valueAfterAccident =
         initialPrice * 0.9 *
         (1 - damageSeverity) *
-        getMilageConstant(mileage)
+        getMileageConstant(mileage)
 })
 @layout.columnDockPadding(500, [50])
     .dockSpace(30)
@@ -73,6 +54,7 @@ export class HomeView extends View {
             fontSize: '18px'
         }
     });
+
     @layout.dock.top()
         .size(350, true)
     detailedDescription = Text.with({
@@ -139,48 +121,40 @@ export class HomeView extends View {
     })
 
 
-
-    @flow.stateStep('increase', { transition: { duration: 100 } }, layout.rotateFrom(0, 0, 0.1))
-    @flow.stateStep('increase', { transition: { duration: 100 } }, layout.rotate(0, 0, 0))
-    @flow.stateStep('decrease', { transition: { duration: 100 } }, layout.rotateFrom(0, 0, 0.1))
+    /* Flow states defined to indiciate the transition from one value to another*/
+    /* The 'increase' flow state is executed when the value goes up */
+    @flow.stateStep('increase', shortTransition, layout.rotateFrom(0, 0, 0.1))
+    @flow.stateStep('increase', shortTransition, layout.rotate(0, 0, 0))
+    /* The 'decrease' flow state is executed when the value goes down */
+    @flow.stateStep('decrease', shortTransition, layout.rotateFrom(0, 0, 0.1))
+    /* Scale the text in proportion to the car value */
     @dynamic(({ valueAfterAccident }) => {
-            let scalingFactor = Math.min(Math.max((valueAfterAccident / 28000), 0.2), 1.7)
+            let scalingFactor = Math.min(Math.max((valueAfterAccident / 28000), 0.4), 1.7) || 1;
             return layout.scale(scalingFactor, scalingFactor, 1)
         }
     )
     @layout.dock.top()
         .size(undefined, true)
     valueAdjustedForMileage = (options) => {
-        let currentValue = options.valueAfterAccident;
-        if (this._lastValue !== undefined) {
+        let newValue = options.valueAfterAccident;
+        /* If there is a previous value, then make the animation depending on whether we had an increase or decrease */
+        if (this._previousValue !== undefined) {
             this.setRenderableFlowState(this.valueAdjustedForMileage,
-                this._lastValue > currentValue ? 'decrease' : 'increase');
+                this._previousValue > newValue ? 'decrease' : 'increase');
         }
-        this._lastValue = currentValue;
+        this._previousValue = newValue;
         return Text.with({
-            content: `The worth of your car after the accident: 
-        <span style="color: rgba(156, 39, 176, 0.95); font-size: 30px;" >
-        €${roundToTwoDecimals(
-                currentValue
-            )}</span>`
+            content: this.getResultText()
         });
     }
 
-    @layout.dock.top()
-        .size(undefined, true)
-    question = InputSurface.with({
-        placeholder: 'What is your name?',
-        @bindings.onChange((value) => {
-            this.options.myName = value;
-        })
-        value: this.options.myName
-    })
-
-    @layout.dock.top()
-        .size(undefined, true)
-    answer = Surface.with({
-        content: `Your name is ${this.options.myName}`
-    })
+    getResultText() {
+        return `The worth of your car after the accident: 
+        <span style="color: rgba(156, 39, 176, 0.95); font-size: 30px;" >
+        €${roundToTwoDecimals(
+            this.options.valueAfterAccident
+        )}</span>`
+    }
 
 }
 

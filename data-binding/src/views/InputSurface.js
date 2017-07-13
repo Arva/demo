@@ -2,10 +2,10 @@
  * Created by lundfall on 12/07/2017.
  */
 
-import {InputSurface} from 'arva-js/surfaces/InputSurface.js';
+import {InputSurface as RawInputSurface} from 'arva-js/surfaces/InputSurface.js';
 
 
-export class NiceInputSurface extends InputSurface {
+export class InputSurface extends RawInputSurface {
     static with(options) {
         return super.with({
             ...options,
