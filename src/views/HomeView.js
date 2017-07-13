@@ -3,8 +3,9 @@ import {layout, dynamic, bindings, flow}from 'arva-js/layout/Decorators.js'
 import {Model}                          from 'arva-js/core/Model.js'
 import {Surface}                        from 'arva-js/surfaces/Surface.js';
 
-import {NiceText}                       from './NiceText';
-import {LabeledText}                    from './LabeledText';
+import {Text}                           from './Text.js';
+import {LabeledInput}                   from './LabeledInput.js';
+import {InputSurface}                   from 'arva-js/surfaces/InputSurface.js';
 
 
 let roundToTwoDecimals = (value) => Math.round(value * 100) / 100;
@@ -34,7 +35,8 @@ let getMilageConstant = (mileage) => {
     damageSeverity: 0,
     mileage: 30000,
     valueBeforeAccident: 28000,
-    valueAfterAccident: undefined
+    valueAfterAccident: undefined,
+    myName: ''
 })
 @bindings.preprocess((options, defaultOptions) => {
     let {
@@ -56,7 +58,7 @@ export class HomeView extends View {
 
     @layout.dock.top()
         .size(undefined, true)
-    welcomeText = NiceText.with({
+    welcomeText = Text.with({
         content: `Welcome`,
         properties: {
             fontSize: '32px'
@@ -65,7 +67,7 @@ export class HomeView extends View {
 
     @layout.dock.top()
         .size(350, true)
-    description = NiceText.with({
+    description = Text.with({
         content: `This is a guide to help you determine the diminished value of your car.`,
         properties: {
             fontSize: '18px'
@@ -73,7 +75,7 @@ export class HomeView extends View {
     });
     @layout.dock.top()
         .size(350, true)
-    detailedDescription = NiceText.with({
+    detailedDescription = Text.with({
         content: `The formula is used by insurance companies to asses how much money your car was worth after a crash.`,
         properties: {
             fontSize: '12px'
@@ -82,7 +84,7 @@ export class HomeView extends View {
 
     @layout.dock.top()
         .size(undefined, true)
-    initialMarketPrice = LabeledText.with({
+    initialMarketPrice = LabeledInput.with({
         label: 'The sales value of your car (€)',
         @bindings.onChange((value) => {
             this.options.initialPrice = value;
@@ -94,7 +96,7 @@ export class HomeView extends View {
 
     @layout.dock.top()
         .size(undefined, true)
-    mileage = LabeledText.with({
+    mileage = LabeledInput.with({
         label: 'The mileage of your car',
         @bindings.onChange((value) => {
             this.options.mileage = value;
@@ -104,7 +106,7 @@ export class HomeView extends View {
 
     @layout.dock.top()
         .size(undefined, true)
-    damageSeverity = LabeledText.with({
+    damageSeverity = LabeledInput.with({
         label: 'Damage severity',
         dropdown: {
             items: [
@@ -155,7 +157,7 @@ export class HomeView extends View {
                 this._lastValue > currentValue ? 'decrease' : 'increase');
         }
         this._lastValue = currentValue;
-        return NiceText.with({
+        return Text.with({
             content: `The worth of your car after the accident: 
         <span style="color: rgba(156, 39, 176, 0.95); font-size: 30px;" >
         €${roundToTwoDecimals(
@@ -163,6 +165,22 @@ export class HomeView extends View {
             )}</span>`
         });
     }
+
+    @layout.dock.top()
+        .size(undefined, true)
+    question = InputSurface.with({
+        placeholder: 'What is your name?',
+        @bindings.onChange((value) => {
+            this.options.myName = value;
+        })
+        value: this.options.myName
+    })
+
+    @layout.dock.top()
+        .size(undefined, true)
+    answer = Surface.with({
+        content: `Your name is ${this.options.myName}`
+    })
 
 }
 

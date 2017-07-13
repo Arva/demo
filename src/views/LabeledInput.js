@@ -6,9 +6,10 @@ import {InputSurface}           from 'arva-js/surfaces/InputSurface.js';
 
 import {View}                   from 'arva-js/core/View.js';
 import {layout, bindings, event}from 'arva-js/layout/Decorators.js';
-import {NiceText} from './NiceText';
-import {NiceInputSurface} from './NiceInputSurface';
-import {NiceDropdown} from './NiceDropdown';
+import {Text}                   from './Text.js';
+import {NiceInputSurface}       from './NiceInputSurface.js';
+import {NiceDropdown}           from './NiceDropdown.js';
+
 
 @bindings.setup({
     content: 'Hello world',
@@ -17,10 +18,10 @@ import {NiceDropdown} from './NiceDropdown';
 })
 
 @layout.dockSpace(10)
-export class LabeledText extends View {
+export class LabeledInput extends View {
 
     @layout.dock.top(true)
-    label = NiceText.with({ content: this.options.label + ':', properties: {fontSize: '12px'}});
+    label = Text.with({ content: this.options.label + ':', properties: {fontSize: '12px'}});
 
     @layout.dock.top(32)
     inputSurface = this.options.dropdown.items ?

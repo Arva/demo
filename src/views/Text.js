@@ -5,7 +5,7 @@
 import {Surface} from 'arva-js/surfaces/Surface.js';
 
 
-export class NiceText extends Surface {
+export class Text extends Surface {
     static with(options) {
         return super.with({
             ...options, properties: {
