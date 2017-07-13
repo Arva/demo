@@ -11,6 +11,9 @@
     "copy-apk": "mkdir -p build && cp platforms/android/build/outputs/apk/android-armv7-release.apk build/android-armv7-release.apk",
     "release": "npm run build -- --minify --skip-source-maps  && npm run gen-icons && cordova build --release && npm run copy-apk && echo Release done at `date`"
   },
+  "links": {
+    "arva-js": "../../arva-js"
+  },
   "jspm": {
     "name": "nl.bizboard.arva.seed",
     "main": "main.js",

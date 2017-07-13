@@ -1,8 +1,6 @@
-import {View}                           from 'arva-js/core/View.js'
-import {layout, dynamic, bindings, flow}from 'arva-js/layout/Decorators.js'
-import {Model}                          from 'arva-js/core/Model.js'
+import {View}                           from 'arva-js/core/View.js';
+import {layout, dynamic, bindings, flow}from 'arva-js/layout/Decorators.js';
 import {Surface}                        from 'arva-js/surfaces/Surface.js';
-import {InputSurface}                   from 'arva-js/surfaces/InputSurface.js';
 
 import {getMileageConstant,
     roundToTwoDecimals}                 from '../utils/Calculations.js';
@@ -129,7 +127,7 @@ export class HomeView extends View {
     @flow.stateStep('decrease', shortTransition, layout.rotateFrom(0, 0, 0.1))
     /* Scale the text in proportion to the car value */
     @dynamic(({ valueAfterAccident }) => {
-            let scalingFactor = Math.min(Math.max((valueAfterAccident / 28000), 0.4), 1.7) || 1;
+            let scalingFactor = Math.min(Math.max((valueAfterAccident / 28000), 0.4), 1.4) || 1;
             return layout.scale(scalingFactor, scalingFactor, 1)
         }
     )
