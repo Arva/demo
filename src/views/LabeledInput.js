@@ -10,18 +10,17 @@ import {Text}                   from './Text.js';
 import {NiceInputSurface}       from './NiceInputSurface.js';
 import {NiceDropdown}           from './NiceDropdown.js';
 
-
 @bindings.setup({
     content: 'Hello world',
     value: '',
-    dropdown: {selectedItem: {}}
+    dropdown: { selectedItem: {} }
 })
 
 @layout.dockSpace(10)
 export class LabeledInput extends View {
 
     @layout.dock.top(true)
-    label = Text.with({ content: this.options.label + ':', properties: {fontSize: '12px'}});
+    label = Text.with({ content: this.options.label + ':', properties: { fontSize: '12px' } });
 
     @layout.dock.top(32)
     inputSurface = this.options.dropdown.items ?
@@ -33,11 +32,11 @@ export class LabeledInput extends View {
             selectedItem: undefined
         }) :
         NiceInputSurface.with({
-        @bindings.onChange((value) => {
-            this.options.value = value;
-        })
-        value: this.options.value
-    });
+            @bindings.onChange((value) => {
+                this.options.value = value;
+            })
+            value: this.options.value
+        });
 
 
 }
