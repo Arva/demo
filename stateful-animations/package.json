@@ -1,6 +1,7 @@
 {
   "scripts": {
     "install-all": "npm install && jspm install",
+    "postinstall": "jspm install",
     "prebuild": "node scripts/initialLinkedSync.js",
     "build": "jspm build src/App.js www/bundle.js",
     "postbuild": "echo Build finished at `date`",
@@ -12,7 +13,6 @@
     "release": "npm run build -- --minify --skip-source-maps  && npm run gen-icons && cordova build --release && npm run copy-apk && echo Release done at `date`"
   },
   "links": {
-    "arva-js": "../../arva-js"
   },
   "jspm": {
     "name": "nl.bizboard.arva.seed",
