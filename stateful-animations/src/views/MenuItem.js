@@ -24,7 +24,7 @@ export class MenuItem extends View {
     });
 
     @layout.fullSize()
-    background = Surface.with()
+    background = Surface.with();
 
     constructor(options){
         super(options);

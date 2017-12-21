@@ -5,7 +5,8 @@ import {Surface}                        from 'arva-js/surfaces/Surface.js';
 import {FloatingButton}                 from './FloatingButton.js';
 import {BottomMenu}                     from './BottomMenu.js';
 import {Easing}                         from 'arva-js/utils/Easing.js';
-
+import {BgImageSurface}                 from 'arva-js/surfaces/BgImageSurface.js';
+import picture                          from './christmas-feeling.jpg';
 
 @layout.nativeScrollable()
 @bindings.setup({
@@ -22,11 +23,22 @@ export class HomeView extends View {
 
     @layout.dock.bottom(200)
     @dynamic(({isOpen}) =>
-        isOpen ? flow.transition({curve: Easing.outBack, duration: 500})(layout.translate(0, 0, 0).opacity(1)) :
-            flow.transition()(layout.opacity(0).translate(0, 200, 0))
+        isOpen ? flow.transition({curve: Easing.outCubic, duration: 500})(layout.translate(0, 0, 0)) :
+            flow.transition()(layout.translate(0, 200, 0))
     )
-    bottomMenu = BottomMenu.with()
+    bottomMenu = BottomMenu.with();
 
+
+    @layout.fullSize()
+        .translate(0, 0, -5)
+    @dynamic(({isOpen}) => flow.transition()(layout.opacity(isOpen ? .4 : 0)))
+    darkOverlay = Surface.with({properties: {backgroundColor: 'black'}});
+
+
+    @layout
+        .fullSize()
+        .translate(0, 0, -10)
+    background = BgImageSurface.with({content: picture});
 
 
 }

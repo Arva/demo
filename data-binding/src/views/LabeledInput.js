@@ -11,7 +11,7 @@ import {Dropdown}               from './Dropdown.js';
 @bindings.setup({
     content: 'Hello world',
     value: '',
-    dropdown: { selectedItem: {} }
+    dropdown: { selectedItemIndex: 0 }
 })
 @layout.dockSpace(10)
 export class LabeledInput extends View {
@@ -23,16 +23,10 @@ export class LabeledInput extends View {
     inputSurface = this.options.dropdown.items ?
         Dropdown.with({
             items: this.options.dropdown.items,
-            @bindings.onChange((selectedItem) =>
-                this.options.dropdown.selectedItem = selectedItem
-            )
-            selectedItem: undefined
+            selectedItemIndex: this.inputOptions.dropdown.selectedItemIndex
         }) :
         InputSurface.with({
-            @bindings.onChange((value) => {
-                this.options.value = value;
-            })
-            value: this.options.value
+            value: this.inputOptions.value
         });
 
 

@@ -1,22 +1,18 @@
 {
   "scripts": {
     "install-all": "npm install && jspm install",
-    "postinstall": "jspm i",
+    "postinstall": "jspm install",
     "prebuild": "node scripts/initialLinkedSync.js",
-    "prewatch": "node scripts/prepareBabelSetup.js",
     "build": "jspm build src/App.js www/bundle.js",
     "postbuild": "echo Build finished at `date`",
     "start": "electron www/electron.js",
     "watch": "node scripts/linkedWatcher.js",
     "gen-keystore": "keytool -genkey -v -keystore release.keystore -alias release -keyalg RSA -keysize 2048 -validity 10000",
     "gen-icons": "node ./scripts/generateIcons.js",
-    "copy-apk": "mkdir -p build && cp platforms/anxdroid/build/outputs/apk/android-armv7-release.apk build/android-armv7-release.apk",
+    "copy-apk": "mkdir -p build && cp platforms/android/build/outputs/apk/android-armv7-release.apk build/android-armv7-release.apk",
     "release": "npm run build -- --minify --skip-source-maps  && npm run gen-icons && cordova build --release && npm run copy-apk && echo Release done at `date`"
   },
-  "arva": {
-    "links": {
-    }
-  },
+  "links": {},
   "jspm": {
     "name": "nl.bizboard.arva.seed",
     "main": "main.js",
@@ -64,7 +60,7 @@
       "fs": "npm:jspm-nodelibs-fs@^0.2.0",
       "os": "npm:jspm-nodelibs-os@^0.2.0",
       "path": "npm:jspm-nodelibs-path@^0.2.0",
-      "process": "npm:jspm-nodelibs-process@^0.2.0",
+      "process": "github:jspm/nodelibs-process@^0.2.0-alpha",
       "stream": "npm:jspm-nodelibs-stream@^0.2.0",
       "string_decoder": "npm:jspm-nodelibs-string_decoder@^0.2.0",
       "timers": "npm:jspm-nodelibs-timers@^0.2.0",
@@ -131,7 +127,6 @@
     "jspm": "^0.17.0-beta.28",
     "jspm-git": "^0.5.0-beta.3",
     "rimraf": "^2.5.4",
-    "splashicon-generator": "^0.2.7",
-    "wml": "0.0.82"
+    "splashicon-generator": "^0.2.7"
   }
 }
